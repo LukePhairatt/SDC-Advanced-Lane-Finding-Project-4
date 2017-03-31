@@ -10,7 +10,7 @@ The goals / steps of this project are the following:
 * Determine the curvature of the lane and vehicle position with respect to center.
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
-* **[Rubric Points]**(https://review.udacity.com/#!/rubrics/571/view)
+* [**Rubric Points**](https://review.udacity.com/#!/rubrics/571/view)
 
 [//]: # (Image References)
 
@@ -24,7 +24,7 @@ The goals / steps of this project are the following:
 [video1]: ./project_video_out.mp4 "Video"
 
 
-###Intro
+### Intro
 _The challenges I face were_
 * Finding the good set of thresholding ranges that work on normal, bright, dark conditions.
 * Finding the bit mask logic for combining binary extraction in sobel edge detection and color channel hls or rgb   
@@ -44,18 +44,17 @@ _Solution to the problems_
 
 I took the following steps to acheive the good result on the project video.
 
-###Camera Calibration
+### Camera Calibration
 * The code for this step is in  CameraCalibExtra.py file (line 10-73). 
 * Calibrate with 9x6 grid pattern
 * I gain extra calibation pictures (picture 1&5) when they failed with 9x6 pattern due to incomplete FOV.  
   These picture were remapped to 9x5 and 7x6 pattern for the calibration.
 * The camera parameters are save to the pickle file
 
-The sample undistorted image is shown below:
-![Undistorted][image1]
+The sample undistorted image is shown below:  
+![Undistorted][image1]  
 
-
-###Image processing pipline 
+### Image processing pipline 
 * Codes in **AdvanceLane_PiplineVideo.py**
 * This has been achieved with the combination of Sobel edge detection, HLS, and RGB
 * From experimenting with various images on different lighting condition such as Normal, Bright, Dark. I succeeded with this combination.
@@ -67,18 +66,16 @@ bin_output[((gradx == 1) & (grady == 1)) | ((mag_binary == 1) & (dir_binary == 1
 bin_output[ ((bin_h == 1) & (bin_s == 1))  | (bin_r ==1) ] = 1
 
 **Combined result**  
-bin_output[ ((bin_sobel == 1) | (bin_color == 1))] = 1
-![Binary Sobel and Color Combine Example][image3]
+bin_output[ ((bin_sobel == 1) | (bin_color == 1))] = 1  
+![Binary Sobel and Color Combine Example][image3]  
 
 
-* Later the image was cropped to the specific ROI, as shown below
-![Binary Mask Roi Example][image4]
+* Later the image was cropped to the specific ROI, as shown below  
+![Binary Mask Roi Example][image4]  
 
 
-###Perspective transformation
-
-![Road Transformed][image2]
-
+### Perspective transformation    
+![Road Transformed][image2]  
 
 This resulted in the following source and destination points:
 
@@ -92,7 +89,7 @@ This resulted in the following source and destination points:
 * The code for my perspective transform includes a function called **‘ComputeTransform()’**,   
   which appears in lines 78 through 91 in the file **‘CameraCalibExtra.py’**.
 
-###Left/Right Lane lines detection 
+### Left/Right Lane lines detection 
 * On start up, I use the histogram peak approach to search the line pixels and fit the 2nd order polynomial line like the one below.   
   **ExtractLinesFromInitial()** in **AdvanceLane_PiplineVideo.py** (line 218-334)
 ![Fit Visual Start][image5]
@@ -102,7 +99,7 @@ This resulted in the following source and destination points:
   **ExtractLinesReiterate()** in **AdvanceLane_PiplineVideo.py** (line 337-405)
 ![Fit Visual Next][image6]
 
-###Curvature radius and Vehicle position calculation
+### Curvature radius and Vehicle position calculation
 Pixel to Meter conversion: Work out from the warped straight line image
 y = line length 487 to 553  = 66 pixels for 3.0 m   =>  0.0455 m/pixel  
 x = line gap 327 to 970     = 643 pixels for 3.7 m  =>  0.0060 m/pixel  
@@ -114,18 +111,18 @@ The position of the vehicle from the center was computed using the x- base point
 **Position** = (image width – left base point – right base point)/2
 **Direction:** On the right if Position +, On the left if Position –
 
-###Output image
-![Output][image7]
+### Output image  
+![Output][image7]  
 
-###Output video
-![Video][video1]
+### Output video  
+![Video][video1]  
 
-###When it might fail
+### When it might fail
 * Twist and turn corners so some of the lane lines are out of camera view, or fixed ROI.   
 * When it snows or rains heavily! So not lane lines are visible or follow other track lines.   
 * Moving lane might be interesting.
 
-###Something to try out further
+### Something to try out further
 * Experiment with contrast adjustment/enhancement on each channel of RGB images.  
 * Explore registration techniques combine with speed information to record broken line for a better polynomial fit.   
 * Try optical flow to predict the line connection in substitution to the polynomial fit.   
