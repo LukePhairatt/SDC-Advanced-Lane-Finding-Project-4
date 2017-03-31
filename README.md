@@ -105,7 +105,7 @@ This resulted in the following source and destination points:
 * There a function call **SantityCheck()** in **AdvanceLane_PiplineVideo.py** (line 549-596) to check all of these condition on every iteration. 
 
 ### Curvature radius and Vehicle position calculation
-Pixel to Meter conversion: Work out from the warped straight line image
+Pixel to Meter conversion: Work out from the warped straight line image  
 y = line length 487 to 553  = 66 pixels for 3.0 m   =>  0.0455 m/pixel  
 x = line gap 327 to 970     = 643 pixels for 3.7 m  =>  0.0060 m/pixel  
 
