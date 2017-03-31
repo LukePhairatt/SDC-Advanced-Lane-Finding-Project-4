@@ -99,6 +99,11 @@ This resulted in the following source and destination points:
   **ExtractLinesReiterate()** in **AdvanceLane_PiplineVideo.py** (line 337-405)  
 ![Fit Visual Next][image6]
 
+* When bad condition detected such as the lines are not parallel, the gap is not in the range it should be, the left and right curvature is very different  
+  and also the is a big jump in the average curvature from the previous loop for e.g. 2 consecutive order, we need to reset the iteration and start the search from  
+  the beginning.
+* There a function call **SantityCheck()** in **AdvanceLane_PiplineVideo.py** (line 549-596) to check all of these condition on every iteration. 
+
 ### Curvature radius and Vehicle position calculation
 Pixel to Meter conversion: Work out from the warped straight line image
 y = line length 487 to 553  = 66 pixels for 3.0 m   =>  0.0455 m/pixel  
