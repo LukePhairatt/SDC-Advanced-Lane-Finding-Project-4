@@ -74,7 +74,7 @@ bin_output[ ((bin_sobel == 1) | (bin_color == 1))] = 1
 ![Binary Mask Roi Example][image4]  
 
 
-### Perspective transformation    
+### Perspective transformation  
 ![Road Transformed][image2]  
 
 This resulted in the following source and destination points:
@@ -91,12 +91,12 @@ This resulted in the following source and destination points:
 
 ### Left/Right Lane lines detection 
 * On start up, I use the histogram peak approach to search the line pixels and fit the 2nd order polynomial line like the one below.   
-  **ExtractLinesFromInitial()** in **AdvanceLane_PiplineVideo.py** (line 218-334)
+  **ExtractLinesFromInitial()** in **AdvanceLane_PiplineVideo.py** (line 218-334)  
 ![Fit Visual Start][image5]
 
 
 * On the next image frame, I don’t start to search blindly. I use the previous fit line to pick the neighbor pixels around these line for the fit.  
-  **ExtractLinesReiterate()** in **AdvanceLane_PiplineVideo.py** (line 337-405)
+  **ExtractLinesReiterate()** in **AdvanceLane_PiplineVideo.py** (line 337-405)  
 ![Fit Visual Next][image6]
 
 ### Curvature radius and Vehicle position calculation
