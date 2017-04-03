@@ -21,7 +21,8 @@ The goals / steps of this project are the following:
 [image5]: ./output_images/curvefit_startup.png "Fit Visual Start"
 [image6]: ./output_images/curvefit_iterate.png "Fit Visual Next"
 [image7]: ./output_images/final.png "Output"
-[video1]: ./project_video_out.mp4 "Video"
+[video1]: ./project_video_out.mp4 "Video project"
+[video2]: ./challenge_video_out.mp4 "Video challenge"
 
 
 ### Intro
@@ -120,18 +121,25 @@ The position of the vehicle from the center was computed using the x- base point
 ![Output][image7]  
 
 ### Output video  
-![Video][video1]  
+![Video project][video1]  
+![Video challenge][video2]  
+Note: challenge_video_out.mp4 is a work in progress and is used as a reference for this project on the normal video. 
+I fine tuned it to make it work as a benchmark, just to see how different it would be from the normal video (project_video.mp4)  
+in term of a parameter setting. 
 
-### When it might fail
-* Twist and turn corners so some of the lane lines are out of camera view, or fixed ROI.   
-* When it snows or rains heavily! So not lane lines are visible or follow other track lines.   
-* Moving lane might be interesting.
 
-### Something to try out further
-* Experiment with contrast adjustment/enhancement on each channel of RGB images.  
-* Explore registration techniques combine with speed information to record broken line for a better polynomial fit.   
-* Try optical flow to predict the line connection in substitution to the polynomial fit.   
-* Try lane tracking and predicting using probabilistic approach?   
+### When this solution might fail
+* When it snows, or rains. So lane lines are not very visible or the condition is changed very much (very bright/ dark so the lane lines are very not clear to see)  
+  that these fixed thresholding parameters are no longer work.  
+* Other lane or tire marks as well as substantial overcasting shadow as appeared on the challenge videos would be appeared as the lane lines. The might lead to the fault classification.    
+
+### Further improvement
+To get it works on wider conditions, my implementation of this lane detections needs to be generalized more to avoid over fitting into one condition.   
+For this work, I might need to reduce the number of bit mask logics for the binary image thresholding in order to make it more flexible.  
+One could use adaptive or machine learning approaches to adjust the thresholding parameters and other image processing parameters according to the lighting conditions.  
+For example, we could select the parameters base on the current image histogram. However, I am not sure how reliable it would be.   
+In addition to the land detection from the binary image as used in this project, other different techniques that less subjective or sensitive to image lighting and contrast could be explored  
+such as image registration/pattern matching techniques.  
 
 
 

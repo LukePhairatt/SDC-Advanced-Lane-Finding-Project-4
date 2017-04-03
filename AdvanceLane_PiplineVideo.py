@@ -555,7 +555,7 @@ def SanityCheck(LeftLineData, RightLineData, left_fit, right_fit, left_curve, ri
     ret_sts = False
     # Lines have similar curvature
     diff_curve =  abs(right_curve-left_curve)
-    # Simple check from the x distance between lines
+    # Simple check between say 10 lines for average
     yp = np.linspace(0, img_size[1]-1, 10 )
     xp_l = left_fit[0]*yp**2 + left_fit[1]*yp + left_fit[2]
     xp_r = right_fit[0]*yp**2 + right_fit[1]*yp + right_fit[2]
@@ -625,10 +625,10 @@ class AdvanceLaneDetection():
         self.badDetection = 0                       # number of consecutive bad detection
         self.badDetectionThresh = 1                 # request restart after badDetection going beyond this number
         self.mode = mode                            # 'live', 'average': overlay current or average best fit result
-        
+        self.frame_counter = 0                      # counting processed frame
         
     def ProcessorPipline(self, image):
-        
+        self.frame_counter += 1
         ####
         ##                 CHECK CAMERA PARAMETERS
         ###
@@ -644,7 +644,6 @@ class AdvanceLaneDetection():
         ####
         ##                 EXTRACT BINARY IMAGE
         ###
-        
         # Undistort image
         img_undist = UndistortImage(image, self.mtx, self.dist, plot_result = False)
         # Thresholding to binary image: Sobel/HLS/HSV/RGB
@@ -654,13 +653,14 @@ class AdvanceLaneDetection():
         bin_color = ColorChannelThreshold(img_undist, self.hls_thresh, self.rgb_thresh)     
         # Combine Edge&Color binary
         bin_output = np.zeros_like(bin_color)
-        bin_output[ ((bin_sobel == 1) | (bin_color == 1))] = 1    
+        bin_output[ ((bin_sobel == 1) | (bin_color == 1))] = 1
+        #mpimg.imsave('./output_images/'+ 'test' + str(self.frame_counter)+ '_bin', bin_output, format='jpg')
         # Mask ROI
         bin_output = region_of_interest(bin_output, vertices)
+        #mpimg.imsave('./output_images/'+ 'test' + str(self.frame_counter)+ '_binROI', bin_output, format='jpg')
         # Perspective transform of the lane line
         img_size = (bin_output.shape[1],bin_output.shape[0])
         bin_warped = ApplyTransformation(bin_output, self.M, img_size)
-        
         if self.PlotBinary:
             plt.figure(1)
             plt.imshow(bin_sobel, cmap='gray')
@@ -678,7 +678,7 @@ class AdvanceLaneDetection():
             plt.imshow(bin_warped, cmap='gray')
             plt.title("Warp")
             plt.show()
-            
+        #mpimg.imsave('./output_images/'+ 'test' + str(self.frame_counter)+'_binWarp', bin_warped, format='jpg')            
             
         ####
         ##                 LANE DETECTION LOOP
@@ -826,10 +826,10 @@ class AdvanceLaneDetection():
         color = (255,255,255)
         thickness = 2
         final_result = DrawText(final_result,x,y,size,color,thickness,avg_curverad_n, abs(avg_vehicle_off), avg_direction)
+          
         return final_result
         
         
-    
 if __name__ == '__main__':
     ym_per_pixel = 30.0/720                      # meters per pixel in y dimension (720 pixels/30 meter)
     xm_per_pixel = 3.7/700                       # meters per pixel in x dimension (700 pixels/3.7 meter)
@@ -866,14 +866,15 @@ if __name__ == '__main__':
                               ]],dtype=np.int32)
     
     # Lane detection instance
-    display_mode = 'live'                        # 'live': display current line,  'average': n-iterations display
+    display_mode = 'average'                        # 'live': display current line,  'average': n-iterations display
     LaneDetection = AdvanceLaneDetection(xm_per_pixel,ym_per_pixel,line_iteration,mtx,dist,M,Minv,\
                                          Sobel,hls_thresh,rgb_thresh, vertices, display_mode)
     
     
-    '''
+    
     # Test image sequence
-    test_images = glob.glob('./mytest_images/Pictures*.jpg')
+    #test_images = glob.glob('./mytest_images/Pictures*.jpg')
+    test_images = glob.glob('./test_images/test*.jpg')
     #sort file in order test01,test02,test03.....
     test_images = np.sort(test_images)
     for fname in test_images:
@@ -881,7 +882,7 @@ if __name__ == '__main__':
         img = mpimg.imread(fname)
         final_img = LaneDetection.ProcessorPipline(img)
         # save to local disk
-        out_folder = './output_images/'
+        out_folder = './test_images/test_output/'
         out_path   = out_folder + 'out_' + fname.split('/')[-1]
         mpimg.imsave(out_path, final_img, format='jpg')
     
@@ -900,13 +901,14 @@ if __name__ == '__main__':
     plt.plot(LaneDetection.det_sts)
     plt.show()
     
+    
     '''
     # Video processing
     drive_output = 'project_video_out.mp4'
     clip1 = VideoFileClip("project_video.mp4")
     drive_clip = clip1.fl_image(LaneDetection.ProcessorPipline) #NOTE: this function expects color images!!
     drive_clip.write_videofile(drive_output, audio=False)
-    
+    '''
     
     
     
